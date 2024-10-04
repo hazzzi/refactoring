@@ -17,6 +17,7 @@ const UserManagement: React.FC = () => {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [editMode, setEditMode] = useState<boolean>(false);
 
+  // 1. 유저 목록을 불러오는 일
   useEffect(() => {
     fetchUsers();
   }, []);
@@ -34,15 +35,18 @@ const UserManagement: React.FC = () => {
     }
   };
 
+  // 2. 유저를 선택하는 일
   const handleUserClick = (user: User) => {
     setSelectedUser(user);
     setEditMode(false);
   };
 
+  // 3. 유저 정보를 수정모드로 전환
   const handleEditClick = () => {
     setEditMode(true);
   };
 
+  // 4. 유저 정보를 저장하는 일
   const handleSaveClick = async () => {
     if (!selectedUser) return;
 
@@ -56,6 +60,7 @@ const UserManagement: React.FC = () => {
     }
   };
 
+  // 5. 수정 모드에서 유저 정보를 전환하는 일
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!selectedUser) return;
 
