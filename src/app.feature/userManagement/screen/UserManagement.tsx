@@ -1,72 +1,19 @@
 import { BASE_URL } from '@/app.module/api/environment';
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
-
-type User = {
-  id: number;
-  name: string;
-  email: string;
-  role: 'admin' | 'user';
-  lastLogin: string;
-};
+import React, { useState } from 'react';
+import useFetchUser from '../module/useFetchUser';
+import useSelectUser from '../module/useSelectUser';
 
 const UserManagement: React.FC = () => {
-  const [users, setUsers] = useState<User[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const { loading, error, refetch, users } = useFetchUser();
+  const [mutateError, setMutateError] = useState<string | null>(null);
+  const { selectedUser, onSelectUser } = useSelectUser();
+
+  // update
   const [editMode, setEditMode] = useState<boolean>(false);
 
-  useEffect(() => {
-    fetchUsers();
-  }, []);
-
-  const fetchUsers = async () => {
-    try {
-      setLoading(true);
-      const response = await axios.get<User[]>(`${BASE_URL}/users`);
-      setUsers(response.data);
-      setLoading(false);
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (err) {
-      setError('Failed to fetch users');
-      setLoading(false);
-    }
-  };
-
-  const handleUserClick = (user: User) => {
-    setSelectedUser(user);
-    setEditMode(false);
-  };
-
-  const handleEditClick = () => {
-    setEditMode(true);
-  };
-
-  const handleSaveClick = async () => {
-    if (!selectedUser) return;
-
-    try {
-      await axios.put(`${BASE_URL}/users/${selectedUser.id}`, selectedUser);
-      setEditMode(false);
-      fetchUsers();
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (err) {
-      setError('Failed to update user');
-    }
-  };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!selectedUser) return;
-
-    setSelectedUser({
-      ...selectedUser,
-      [e.target.name]: e.target.value,
-    });
-  };
-
   if (loading) return <div>Loading...</div>;
-  if (error) return <div>{error}</div>;
+  if (error || mutateError) return <div>{error ?? mutateError}</div>;
 
   return (
     <div>
@@ -76,7 +23,13 @@ const UserManagement: React.FC = () => {
           <h2>User List</h2>
           <ul>
             {users.map((user) => (
-              <li key={user.id} onClick={() => handleUserClick(user)}>
+              <li
+                key={user.id}
+                onClick={() => {
+                  onSelectUser(user);
+                  setEditMode(false);
+                }}
+              >
                 {user.name} ({user.email})
               </li>
             ))}
@@ -91,22 +44,58 @@ const UserManagement: React.FC = () => {
                   <input
                     name="name"
                     value={selectedUser.name}
-                    onChange={handleInputChange}
+                    onChange={(e) => {
+                      if (!selectedUser) return;
+
+                      onSelectUser({
+                        ...selectedUser,
+                        [e.target.name]: e.target.value,
+                      });
+                    }}
                   />
                   <input
                     name="email"
                     value={selectedUser.email}
-                    onChange={handleInputChange}
+                    onChange={(e) => {
+                      if (!selectedUser) return;
+
+                      onSelectUser({
+                        ...selectedUser,
+                        [e.target.name]: e.target.value,
+                      });
+                    }}
                   />
                   <select
                     name="role"
                     value={selectedUser.role}
-                    onChange={handleInputChange as unknown as React.ChangeEventHandler<HTMLSelectElement>}
+                    onChange={(e) => {
+                      if (!selectedUser) return;
+
+                      onSelectUser({
+                        ...selectedUser,
+                        [e.target.name]: e.target.value,
+                      });
+                    }}
                   >
                     <option value="user">User</option>
                     <option value="admin">Admin</option>
                   </select>
-                  <button onClick={handleSaveClick}>Save</button>
+                  <button
+                    onClick={async () => {
+                      if (!selectedUser) return;
+
+                      try {
+                        await axios.put(`${BASE_URL}/users/${selectedUser.id}`, selectedUser);
+                        setEditMode(false);
+                        refetch();
+                        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                      } catch (err) {
+                        setMutateError('Failed to update user');
+                      }
+                    }}
+                  >
+                    Save
+                  </button>
                 </div>
               ) : (
                 <div>
@@ -114,7 +103,13 @@ const UserManagement: React.FC = () => {
                   <p>Email: {selectedUser.email}</p>
                   <p>Role: {selectedUser.role}</p>
                   <p>Last Login: {new Date(selectedUser.lastLogin).toLocaleString()}</p>
-                  <button onClick={handleEditClick}>Edit</button>
+                  <button
+                    onClick={() => {
+                      setEditMode(true);
+                    }}
+                  >
+                    Edit
+                  </button>
                 </div>
               )}
             </div>
