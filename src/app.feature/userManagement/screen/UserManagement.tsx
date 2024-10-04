@@ -1,6 +1,7 @@
 import { BASE_URL } from '@/app.module/api/environment';
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
+import useFetchUser from '../module/useFetchUser';
 
 type User = {
   id: number;
@@ -11,10 +12,8 @@ type User = {
 };
 
 const UserManagement: React.FC = () => {
-  // fetch
-  const [users, setUsers] = useState<User[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const { loading, error, refetch, users } = useFetchUser();
+  const [mutateError, setMutateError] = useState<string | null>(null);
 
   // select
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
@@ -22,25 +21,8 @@ const UserManagement: React.FC = () => {
   // update
   const [editMode, setEditMode] = useState<boolean>(false);
 
-  useEffect(() => {
-    fetchUsers();
-  }, []);
-
-  const fetchUsers = async () => {
-    try {
-      setLoading(true);
-      const response = await axios.get<User[]>(`${BASE_URL}/users`);
-      setUsers(response.data);
-      setLoading(false);
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (err) {
-      setError('Failed to fetch users');
-      setLoading(false);
-    }
-  };
-
   if (loading) return <div>Loading...</div>;
-  if (error) return <div>{error}</div>;
+  if (error || mutateError) return <div>{error ?? mutateError}</div>;
 
   return (
     <div>
@@ -114,10 +96,10 @@ const UserManagement: React.FC = () => {
                       try {
                         await axios.put(`${BASE_URL}/users/${selectedUser.id}`, selectedUser);
                         setEditMode(false);
-                        fetchUsers();
+                        refetch();
                         // eslint-disable-next-line @typescript-eslint/no-unused-vars
                       } catch (err) {
-                        setError('Failed to update user');
+                        setMutateError('Failed to update user');
                       }
                     }}
                   >
