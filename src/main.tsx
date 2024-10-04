@@ -1,4 +1,4 @@
-import UserManagement from '@/app.feature/user/screen/UserManagement';
+import UserManagement from '@/app.feature/userManagement/screen/UserManagement';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
