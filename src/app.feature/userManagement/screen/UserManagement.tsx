@@ -2,21 +2,12 @@ import { BASE_URL } from '@/app.module/api/environment';
 import axios from 'axios';
 import React, { useState } from 'react';
 import useFetchUser from '../module/useFetchUser';
-
-type User = {
-  id: number;
-  name: string;
-  email: string;
-  role: 'admin' | 'user';
-  lastLogin: string;
-};
+import useSelectUser from '../module/useSelectUser';
 
 const UserManagement: React.FC = () => {
   const { loading, error, refetch, users } = useFetchUser();
   const [mutateError, setMutateError] = useState<string | null>(null);
-
-  // select
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const { selectedUser, onSelectUser } = useSelectUser();
 
   // update
   const [editMode, setEditMode] = useState<boolean>(false);
@@ -35,7 +26,7 @@ const UserManagement: React.FC = () => {
               <li
                 key={user.id}
                 onClick={() => {
-                  setSelectedUser(user);
+                  onSelectUser(user);
                   setEditMode(false);
                 }}
               >
@@ -56,7 +47,7 @@ const UserManagement: React.FC = () => {
                     onChange={(e) => {
                       if (!selectedUser) return;
 
-                      setSelectedUser({
+                      onSelectUser({
                         ...selectedUser,
                         [e.target.name]: e.target.value,
                       });
@@ -68,7 +59,7 @@ const UserManagement: React.FC = () => {
                     onChange={(e) => {
                       if (!selectedUser) return;
 
-                      setSelectedUser({
+                      onSelectUser({
                         ...selectedUser,
                         [e.target.name]: e.target.value,
                       });
@@ -80,7 +71,7 @@ const UserManagement: React.FC = () => {
                     onChange={(e) => {
                       if (!selectedUser) return;
 
-                      setSelectedUser({
+                      onSelectUser({
                         ...selectedUser,
                         [e.target.name]: e.target.value,
                       });

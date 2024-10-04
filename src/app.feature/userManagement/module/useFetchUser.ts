@@ -2,7 +2,7 @@ import { BASE_URL } from "@/app.module/api/environment";
 import axios from "axios";
 import { useEffect, useState } from "react";
 
-type User = {
+export type User = {
   id: number;
   name: string;
   email: string;
