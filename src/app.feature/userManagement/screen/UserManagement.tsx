@@ -1,6 +1,9 @@
 import { BASE_URL } from '@/app.module/api/environment';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
+import UserDetail from '../component/UserDetail';
+import UserForm from '../component/UserForm';
+import UserList from '../component/UserList';
 
 type User = {
   id: number;
@@ -27,7 +30,7 @@ const UserManagement: React.FC = () => {
       const response = await axios.get<User[]>(`${BASE_URL}/users`);
       setUsers(response.data);
       setLoading(false);
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
       setError('Failed to fetch users');
       setLoading(false);
@@ -43,26 +46,15 @@ const UserManagement: React.FC = () => {
     setEditMode(true);
   };
 
-  const handleSaveClick = async () => {
-    if (!selectedUser) return;
-
+  const handleSaveClick = async (user: User) => {
     try {
-      await axios.put(`${BASE_URL}/users/${selectedUser.id}`, selectedUser);
+      await axios.put(`${BASE_URL}/users/${user.id}`, user);
       setEditMode(false);
       fetchUsers();
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
       setError('Failed to update user');
     }
-  };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!selectedUser) return;
-
-    setSelectedUser({
-      ...selectedUser,
-      [e.target.name]: e.target.value,
-    });
   };
 
   if (loading) return <div>Loading...</div>;
@@ -74,48 +66,16 @@ const UserManagement: React.FC = () => {
       <div style={{ display: 'flex' }}>
         <div style={{ width: '50%' }}>
           <h2>User List</h2>
-          <ul>
-            {users.map((user) => (
-              <li key={user.id} onClick={() => handleUserClick(user)}>
-                {user.name} ({user.email})
-              </li>
-            ))}
-          </ul>
+          <UserList users={users} onUserClick={handleUserClick} />
         </div>
         <div style={{ width: '50%' }}>
           <h2>User Details</h2>
           {selectedUser ? (
             <div>
               {editMode ? (
-                <div>
-                  <input
-                    name="name"
-                    value={selectedUser.name}
-                    onChange={handleInputChange}
-                  />
-                  <input
-                    name="email"
-                    value={selectedUser.email}
-                    onChange={handleInputChange}
-                  />
-                  <select
-                    name="role"
-                    value={selectedUser.role}
-                    onChange={handleInputChange as unknown as React.ChangeEventHandler<HTMLSelectElement>}
-                  >
-                    <option value="user">User</option>
-                    <option value="admin">Admin</option>
-                  </select>
-                  <button onClick={handleSaveClick}>Save</button>
-                </div>
+                <UserForm user={selectedUser} onSaveClick={handleSaveClick} />
               ) : (
-                <div>
-                  <p>Name: {selectedUser.name}</p>
-                  <p>Email: {selectedUser.email}</p>
-                  <p>Role: {selectedUser.role}</p>
-                  <p>Last Login: {new Date(selectedUser.lastLogin).toLocaleString()}</p>
-                  <button onClick={handleEditClick}>Edit</button>
-                </div>
+                <UserDetail user={selectedUser} onEditClick={handleEditClick} />
               )}
             </div>
           ) : (
