@@ -21,8 +21,8 @@ const useFetchUser = () => {
       const response = await axios.get<User[]>(`${BASE_URL}/users`);
       setUsers(response.data);
       setLoading(false);
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
+      console.error(err)
       setError('Failed to fetch users');
       setLoading(false);
     }

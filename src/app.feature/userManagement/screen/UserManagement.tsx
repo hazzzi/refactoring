@@ -1,19 +1,16 @@
-import { BASE_URL } from '@/app.module/api/environment';
-import axios from 'axios';
 import React, { useState } from 'react';
 import useFetchUser from '../module/useFetchUser';
 import useSelectUser from '../module/useSelectUser';
+import useUpdateUser from '../module/useUpdateUser';
 
 const UserManagement: React.FC = () => {
   const { loading, error, refetch, users } = useFetchUser();
-  const [mutateError, setMutateError] = useState<string | null>(null);
   const { selectedUser, onSelectUser } = useSelectUser();
-
-  // update
+  const { onUpdateUser } = useUpdateUser();
   const [editMode, setEditMode] = useState<boolean>(false);
 
   if (loading) return <div>Loading...</div>;
-  if (error || mutateError) return <div>{error ?? mutateError}</div>;
+  if (error) return <div>{error}</div>;
 
   return (
     <div>
@@ -82,15 +79,13 @@ const UserManagement: React.FC = () => {
                   </select>
                   <button
                     onClick={async () => {
-                      if (!selectedUser) return;
-
                       try {
-                        await axios.put(`${BASE_URL}/users/${selectedUser.id}`, selectedUser);
+                        await onUpdateUser(selectedUser);
+
                         setEditMode(false);
                         refetch();
-                        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                      } catch (err) {
-                        setMutateError('Failed to update user');
+                      } catch (error) {
+                        console.log(error);
                       }
                     }}
                   >
