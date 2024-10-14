@@ -1,6 +1,7 @@
 import { BASE_URL } from '@/app.module/api/environment';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
+import UserDetail from '../component/UserDetail';
 
 type User = {
   id: number;
@@ -27,7 +28,7 @@ const UserManagement: React.FC = () => {
       const response = await axios.get<User[]>(`${BASE_URL}/users`);
       setUsers(response.data);
       setLoading(false);
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
       setError('Failed to fetch users');
       setLoading(false);
@@ -50,7 +51,7 @@ const UserManagement: React.FC = () => {
       await axios.put(`${BASE_URL}/users/${selectedUser.id}`, selectedUser);
       setEditMode(false);
       fetchUsers();
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
       setError('Failed to update user');
     }
@@ -88,20 +89,14 @@ const UserManagement: React.FC = () => {
             <div>
               {editMode ? (
                 <div>
-                  <input
-                    name="name"
-                    value={selectedUser.name}
-                    onChange={handleInputChange}
-                  />
-                  <input
-                    name="email"
-                    value={selectedUser.email}
-                    onChange={handleInputChange}
-                  />
+                  <input name="name" value={selectedUser.name} onChange={handleInputChange} />
+                  <input name="email" value={selectedUser.email} onChange={handleInputChange} />
                   <select
                     name="role"
                     value={selectedUser.role}
-                    onChange={handleInputChange as unknown as React.ChangeEventHandler<HTMLSelectElement>}
+                    onChange={
+                      handleInputChange as unknown as React.ChangeEventHandler<HTMLSelectElement>
+                    }
                   >
                     <option value="user">User</option>
                     <option value="admin">Admin</option>
@@ -109,13 +104,7 @@ const UserManagement: React.FC = () => {
                   <button onClick={handleSaveClick}>Save</button>
                 </div>
               ) : (
-                <div>
-                  <p>Name: {selectedUser.name}</p>
-                  <p>Email: {selectedUser.email}</p>
-                  <p>Role: {selectedUser.role}</p>
-                  <p>Last Login: {new Date(selectedUser.lastLogin).toLocaleString()}</p>
-                  <button onClick={handleEditClick}>Edit</button>
-                </div>
+                <UserDetail user={selectedUser} onEditClick={handleEditClick} />
               )}
             </div>
           ) : (
