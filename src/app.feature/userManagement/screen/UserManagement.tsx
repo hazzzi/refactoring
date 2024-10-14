@@ -2,6 +2,7 @@ import { BASE_URL } from '@/app.module/api/environment';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import UserDetail from '../component/UserDetail';
+import UserForm from '../component/UserForm';
 
 type User = {
   id: number;
@@ -44,26 +45,15 @@ const UserManagement: React.FC = () => {
     setEditMode(true);
   };
 
-  const handleSaveClick = async () => {
-    if (!selectedUser) return;
-
+  const handleSaveClick = async (user: User) => {
     try {
-      await axios.put(`${BASE_URL}/users/${selectedUser.id}`, selectedUser);
+      await axios.put(`${BASE_URL}/users/${user.id}`, user);
       setEditMode(false);
       fetchUsers();
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
       setError('Failed to update user');
     }
-  };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!selectedUser) return;
-
-    setSelectedUser({
-      ...selectedUser,
-      [e.target.name]: e.target.value,
-    });
   };
 
   if (loading) return <div>Loading...</div>;
@@ -88,21 +78,7 @@ const UserManagement: React.FC = () => {
           {selectedUser ? (
             <div>
               {editMode ? (
-                <div>
-                  <input name="name" value={selectedUser.name} onChange={handleInputChange} />
-                  <input name="email" value={selectedUser.email} onChange={handleInputChange} />
-                  <select
-                    name="role"
-                    value={selectedUser.role}
-                    onChange={
-                      handleInputChange as unknown as React.ChangeEventHandler<HTMLSelectElement>
-                    }
-                  >
-                    <option value="user">User</option>
-                    <option value="admin">Admin</option>
-                  </select>
-                  <button onClick={handleSaveClick}>Save</button>
-                </div>
+                <UserForm user={selectedUser} onSaveClick={handleSaveClick} />
               ) : (
                 <UserDetail user={selectedUser} onEditClick={handleEditClick} />
               )}
