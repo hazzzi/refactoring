@@ -3,6 +3,7 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import UserDetail from '../component/UserDetail';
 import UserForm from '../component/UserForm';
+import UserList from '../component/UserList';
 
 type User = {
   id: number;
@@ -65,13 +66,7 @@ const UserManagement: React.FC = () => {
       <div style={{ display: 'flex' }}>
         <div style={{ width: '50%' }}>
           <h2>User List</h2>
-          <ul>
-            {users.map((user) => (
-              <li key={user.id} onClick={() => handleUserClick(user)}>
-                {user.name} ({user.email})
-              </li>
-            ))}
-          </ul>
+          <UserList users={users} onUserClick={handleUserClick} />
         </div>
         <div style={{ width: '50%' }}>
           <h2>User Details</h2>
