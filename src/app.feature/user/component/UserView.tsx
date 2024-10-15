@@ -1,16 +1,16 @@
-import { User } from '../type';
-
 type Props = {
-  user: User;
+  name: string;
+  email: string;
+  role: string;
 };
 
-const UserView = ({ user }: Props) => {
+const UserView = ({ email, name, role }: Props) => {
   return (
     <div>
       <h2>사용자 정보</h2>
-      <p>이름: {user.name}</p>
-      <p>이메일: {user.email}</p>
-      <p>역할: {user.role}</p>
+      <p>이름: {name}</p>
+      <p>이메일: {email}</p>
+      <p>역할: {role}</p>
     </div>
   );
 };

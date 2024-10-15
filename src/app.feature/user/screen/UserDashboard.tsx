@@ -14,10 +14,10 @@ const UserDashboard: React.FC = () => {
   return (
     <div>
       <h1>사용자 대시보드</h1>
-      <UserView user={user} />
+      <UserView email={user.email} name={user.name} role={user.role} />
       <div>
         <h2>게시물</h2>
-        <PostListView user={user} />
+        <PostListView isAdmin={user.role === 'admin'} />
       </div>
     </div>
   );
