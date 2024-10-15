@@ -1,26 +1,7 @@
 import { BASE_URL } from '@/app.module/api/environment';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-
-type User = {
-  id: number;
-  name: string;
-  email: string;
-  role: 'admin' | 'user';
-};
-
-type Post = {
-  id: number;
-  title: string;
-  content: string;
-  userId: number;
-};
-
-type Comment = {
-  id: number;
-  postId: number;
-  content: string;
-};
+import { Comment, Post, User } from '../type';
 
 const UserDashboard: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
