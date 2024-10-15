@@ -1,6 +1,7 @@
 import { BASE_URL } from '@/app.module/api/environment';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
+import UserView from '../component/UserView';
 import { Comment, Post, User } from '../type';
 
 const UserDashboard: React.FC = () => {
@@ -63,12 +64,7 @@ const UserDashboard: React.FC = () => {
   return (
     <div>
       <h1>사용자 대시보드</h1>
-      <div>
-        <h2>사용자 정보</h2>
-        <p>이름: {user.name}</p>
-        <p>이메일: {user.email}</p>
-        <p>역할: {user.role}</p>
-      </div>
+      <UserView user={user} />
       <div>
         <h2>게시물</h2>
         {posts.map((post) => (
