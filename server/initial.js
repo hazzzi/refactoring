@@ -19,6 +19,15 @@ await db.read();
 server.get('/users', (req, res) => {
   res.send(db.data.users);
 });
+server.get('/user', (req, res) => {
+  res.send(db.data.users[0]);
+});
+server.get('/posts', (req, res) => {
+  res.send(db.data.posts);
+});
+server.get('/comments', (req, res) => {
+  res.send(db.data.comments);
+});
 
 const router = jsonServer.router('server/mock/db.json');
 server.use(router);

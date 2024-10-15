@@ -15,8 +15,36 @@ const generateUsers = (count) => {
   return users;
 };
 
+const generatedPosts = (count) => {
+  const posts = [];
+  for (let i = 0; i < count; i++) {
+    posts.push({
+      id: i + 1,
+      title: faker.lorem.sentence(),
+      content: faker.lorem.paragraphs(),
+      userId: faker.number.int({ min: 1, max: count }),
+    });
+  }
+  return posts;
+};
+
+const generateComments = (count) => {
+  const comments = [];
+  for (let i = 0; i < count; i++) {
+    comments.push({
+      id: i + 1,
+      content: faker.lorem.sentence(),
+      postId: faker.number.int({ min: 1, max: count }),
+      userId: faker.number.int({ min: 1, max: count }),
+    });
+  }
+  return comments;
+};
+
 const data = {
   users: generateUsers(100),
+  posts: generatedPosts(10),
+  comments: generateComments(10),
 };
 
 fs.writeFileSync('server/mock/db.json', JSON.stringify(data, null, 2));
