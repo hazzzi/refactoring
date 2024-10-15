@@ -1,13 +1,13 @@
 import { useData } from '../hook/useData';
-import { Post, User } from '../type';
+import { Post } from '../type';
 import CommentListView from './CommentListView';
-import PostDeleteButtonView from './PostItemView';
+import PostDeleteButtonView from './PostDeleteButtonView';
 
 type Props = {
-  user: User;
+  isAdmin: boolean;
 };
 
-const PostListView = ({ user }: Props) => {
+const PostListView = ({ isAdmin }: Props) => {
   const { data: posts, error, loading } = useData<Post[]>('/posts', []);
 
   if (loading) return <div>로딩 중...</div>;
@@ -18,8 +18,8 @@ const PostListView = ({ user }: Props) => {
     <div key={post.id}>
       <h3>{post.title}</h3>
       <p>{post.content}</p>
-      <PostDeleteButtonView post={post} user={user} />
-      <CommentListView post={post} />
+      <PostDeleteButtonView isAdmin={isAdmin} id={post.id} />
+      <CommentListView postId={post.id} />
     </div>
   ));
 };

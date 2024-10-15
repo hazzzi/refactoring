@@ -1,12 +1,12 @@
 import { useData } from '../hook/useData';
 import useMutate from '../hook/useMutate';
-import { Comment, Post } from '../type';
+import { Comment } from '../type';
 
 type Props = {
-  post: Post;
+  postId: number;
 };
 
-const CommentListView = ({ post }: Props) => {
+const CommentListView = ({ postId }: Props) => {
   const { data: comments, error, loading } = useData<Comment[]>('/comments', []);
   const { mutate } = useMutate('/comments', 'post');
 
@@ -22,7 +22,7 @@ const CommentListView = ({ post }: Props) => {
     <div>
       <h4>댓글</h4>
       {comments
-        .filter((comment) => comment.postId === post.id)
+        .filter((comment) => comment.postId === postId)
         .map((comment) => (
           <p key={comment.id}>{comment.content}</p>
         ))}
@@ -31,7 +31,7 @@ const CommentListView = ({ post }: Props) => {
         placeholder="새 댓글"
         onKeyDown={(e) => {
           if (e.key === 'Enter') {
-            handleAddComment(post.id, e.currentTarget.value);
+            handleAddComment(postId, e.currentTarget.value);
             e.currentTarget.value = '';
           }
         }}
