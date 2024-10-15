@@ -1,6 +1,5 @@
-import { BASE_URL } from '@/app.module/api/environment';
-import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { useData } from '../hook/useData';
+import useMutate from '../hook/useMutate';
 import { Comment, Post } from '../type';
 
 type Props = {
@@ -8,42 +7,16 @@ type Props = {
 };
 
 const CommentListView = ({ post }: Props) => {
-  const [comments, setComments] = useState<Comment[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const { data: comments, error, loading } = useData<Comment[]>('/comments', []);
+  const { mutate } = useMutate('/comments', 'post');
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const commentsResponse = await axios.get<Comment[]>(`${BASE_URL}/comments`);
-        setComments(commentsResponse.data);
-
-        setLoading(false);
-      } catch (err) {
-        console.error(err);
-        setError('데이터를 불러오는 중 오류가 발생했습니다.');
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
-  
   const handleAddComment = async (postId: number, content: string) => {
-    try {
-      const response = await axios.post<Comment>(`${BASE_URL}/comments`, {
-        postId,
-        content,
-      });
-      setComments([...comments, response.data]);
-    } catch (err) {
-      console.error(err);
-      setError('댓글을 추가하는 중 오류가 발생했습니다.');
-    }
+    mutate({ postId, content });
   };
 
   if (loading) return <div>로딩 중...</div>;
   if (error) return <div>{error}</div>;
+  if (!comments) return null;
 
   return (
     <div>

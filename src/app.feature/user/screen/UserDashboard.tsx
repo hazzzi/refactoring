@@ -1,31 +1,11 @@
-import { BASE_URL } from '@/app.module/api/environment';
-import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import PostListView from '../component/PostListView';
 import UserView from '../component/UserView';
+import { useData } from '../hook/useData';
 import { User } from '../type';
 
 const UserDashboard: React.FC = () => {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const userResponse = await axios.get<User>(`${BASE_URL}/user`);
-        setUser(userResponse.data);
-
-        setLoading(false);
-      } catch (err) {
-        console.error(err);
-        setError('데이터를 불러오는 중 오류가 발생했습니다.');
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
+  const { data: user, error, loading } = useData<User>('/user');
 
   if (loading) return <div>로딩 중...</div>;
   if (error) return <div>{error}</div>;
