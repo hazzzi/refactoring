@@ -6,7 +6,7 @@ function useMutate<T>(url: string, method: 'post' | 'put' | 'delete') {
   const [error, setError] = useState<Error | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
-  const mutate = async (newData: T, onSuccess?: () => void) => {
+  const mutate = async (newData?: T | null, onSuccess?: () => void) => {
     setLoading(true);
     setError(null);
 
